@@ -27,13 +27,25 @@ def home():
 @app.route("/analyze", methods=['POST'])
 def analyze():
     if request.method == 'POST':
-        cleaned_text = clean("hello, world!")
+        req_data = request.json
+        text = req_data.get('review')
+
+        if text == None:
+            return jsonify({
+                "message": "Provide some text for analysis.",
+                "success": False,
+                "code": 400
+            }), 400
+
+        cleaned_text = clean(text)
+
         res = {
             "message": "Analyzed Sentiment.",
             "success": True,
             "code": 200,
             "payload": cleaned_text
         }
+
         return jsonify(res)
 
 
