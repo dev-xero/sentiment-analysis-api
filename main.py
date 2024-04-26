@@ -48,13 +48,23 @@ def not_found(e):
 
 
 @app.errorhandler(405)
-def not_found(e):
+def not_allowed(e):
     res = {
         "message": "Request method not allowed.",
         "success": False,
         "code": 405
     }
     return jsonify(res), 405
+
+
+@app.errorhandler(500)
+def server_error(e):
+    res = {
+        "message": "Internal server error.",
+        "success": False,
+        "code": 500
+    }
+    return jsonify(res), 500
 
 
 if __name__ == "__main__":
