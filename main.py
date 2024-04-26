@@ -1,6 +1,17 @@
 from flask import Flask, jsonify, request
+from preprocessor import clean
+
+import nltk
 
 app = Flask(__name__)
+
+print("Installing NLTK dependencies...")
+
+# NLTK dependencies
+nltk.download('stopwords')
+nltk.download('wordnet')
+nltk.download('punkt')
+nltk.download('averaged_perceptron_tagger')
 
 
 @app.route("/")
@@ -16,10 +27,12 @@ def home():
 @app.route("/analyze", methods=['POST'])
 def analyze():
     if request.method == 'POST':
+        cleaned_text = clean("hello, world!")
         res = {
             "message": "Analyzed Sentiment.",
             "success": True,
-            "code": 200
+            "code": 200,
+            "payload": cleaned_text
         }
         return jsonify(res)
 
