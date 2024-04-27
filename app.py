@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 from preprocessor import clean
 from keras.models import load_model
 from keras.preprocessing.sequence import pad_sequences
@@ -10,10 +11,14 @@ import os
 
 app = Flask(__name__)
 
+CORS(app)
+
+print("[SYS]: Enabled CORS.")
+
 # NLTK directory
 os.makedirs("nltk", exist_ok=True)
 
-print("Installing NLTK dependencies...")
+print("[SYS]: Installing NLTK dependencies...")
 
 # NLTK dependencies
 nltk.download('averaged_perceptron_tagger', download_dir='nltk')
@@ -24,7 +29,7 @@ nltk.download('punkt', download_dir='nltk')
 
 # Load model
 model = load_model(os.path.join('model', 'SentimentAnalyser.keras'))
-print("Loaded model.")
+print("[SYS]: Loaded model.")
 
 # Load tokenizer
 with open(os.path.join("tokenizers", "tokenizer.pkl"), "rb") as tokenizer_file:
@@ -64,7 +69,7 @@ def analyze():
         analysis = model.predict(padded_text)
         sentiment = 1
 
-        print("PROMPT:", text, "\nANALYSIS:", analysis)
+        print("[SYS]: PROMPT:", text, "\n[SYS]: ANALYSIS:", analysis)
 
         if 0.1 <= analysis <= THRESHOLD:
             sentiment = 0
