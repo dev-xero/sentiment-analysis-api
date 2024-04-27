@@ -22,7 +22,7 @@ pip install -r requirements.txt
 Spin up the server using these commands.
 
 ```bash
-python3 main.py
+gunicorn app:app
 ```
 
 Starts up the server on localhost port 5000.
