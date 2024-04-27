@@ -31,7 +31,7 @@ with open(os.path.join("tokenizers", "tokenizer.pkl"), "rb") as tokenizer_file:
     tokenizer = pickle.load(tokenizer_file)
 
 MAX_LEN: int = 50
-THRESHOLD: float = 0.5
+THRESHOLD: float = 0.20
 
 
 @app.route("/")
@@ -64,7 +64,12 @@ def analyze():
         analysis = model.predict(padded_text)
         sentiment = "Thank you for your positive review of our product! 😊"
 
-        if analysis < THRESHOLD:
+        print("PROMPT:", text, "\nANALYSIS:", analysis)
+
+        if 0.1 <= analysis <= THRESHOLD:
+            sentiment = "We'll work on improving our product. Thank you for your review."
+
+        elif analysis < 0.1:
             sentiment = "We're so sorry to hear that 😥."
 
         res = {
