@@ -1,18 +1,28 @@
 from flask import Flask, jsonify, request
 from preprocessor import clean
+from keras.models import load_model
 
+import tensorflow as tf
 import nltk
+import os
 
 app = Flask(__name__)
+
+# NLTK directory
+os.makedirs("nltk", exist_ok=True)
 
 print("Installing NLTK dependencies...")
 
 # NLTK dependencies
-nltk.download('stopwords')
-nltk.download('wordnet')
-nltk.download('punkt')
-nltk.download('averaged_perceptron_tagger')
+nltk.download('averaged_perceptron_tagger', download_dir='nltk')
+nltk.download('wordnet', download_dir='nltk')
+nltk.download('omw-1.4', download_dir='nltk')
+nltk.download('stopwords', download_dir='nltk')
+nltk.download('punkt', download_dir='nltk')
 
+# load model
+model = load_model(os.path.join('model', 'SentimentAnalyser.keras'))
+print("Loaded model.")
 
 @app.route("/")
 def home():
