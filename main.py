@@ -1,7 +1,9 @@
 from flask import Flask, jsonify, request
 from preprocessor import clean
 from keras.models import load_model
+from keras.preprocessing.sequence import pad_sequences
 
+import pickle
 import tensorflow as tf
 import nltk
 import os
@@ -20,9 +22,17 @@ nltk.download('omw-1.4', download_dir='nltk')
 nltk.download('stopwords', download_dir='nltk')
 nltk.download('punkt', download_dir='nltk')
 
-# load model
+# Load model
 model = load_model(os.path.join('model', 'SentimentAnalyser.keras'))
 print("Loaded model.")
+
+# Load tokenizer
+with open(os.path.join("tokenizers", "tokenizer.pkl"), "rb") as tokenizer_file:
+    tokenizer = pickle.load(tokenizer_file)
+
+MAX_LEN: int = 50
+THRESHOLD: float = 0.5
+
 
 @app.route("/")
 def home():
@@ -48,12 +58,20 @@ def analyze():
             }), 400
 
         cleaned_text = clean(text)
+        tokenized_text = tokenizer.texts_to_sequences([cleaned_text])
+        padded_text = pad_sequences(tokenized_text, MAX_LEN)
+
+        analysis = model.predict(padded_text)
+        sentiment = "Thank you for your positive review of our product! 😊"
+
+        if analysis < THRESHOLD:
+            sentiment = "We're so sorry to hear that 😥."
 
         res = {
             "message": "Analyzed Sentiment.",
             "success": True,
             "code": 200,
-            "payload": cleaned_text
+            "payload": sentiment
         }
 
         return jsonify(res)
