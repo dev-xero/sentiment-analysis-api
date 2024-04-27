@@ -1,3 +1,4 @@
 flask
 nltk
 tensorflow==2.14
+gunicorn
