@@ -62,15 +62,15 @@ def analyze():
         padded_text = pad_sequences(tokenized_text, MAX_LEN)
 
         analysis = model.predict(padded_text)
-        sentiment = "Thank you for your positive review of our product! 😊"
+        sentiment = 1
 
         print("PROMPT:", text, "\nANALYSIS:", analysis)
 
         if 0.1 <= analysis <= THRESHOLD:
-            sentiment = "We'll work on improving our product. Thank you for your review."
+            sentiment = 0
 
         elif analysis < 0.1:
-            sentiment = "We're so sorry to hear that 😥."
+            sentiment = -1
 
         res = {
             "message": "Analyzed Sentiment.",
